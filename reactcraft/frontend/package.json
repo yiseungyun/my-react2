@@ -1,0 +1,13 @@
+{
+  "type": "module",
+  "scripts": {
+    "build": "npx babel src --out-dir dist"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.25.6",
+    "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-react-jsx": "^7.25.2",
+    "@babel/preset-env": "^7.25.4",
+    "@babel/preset-react": "^7.24.7"
+  }
+}
