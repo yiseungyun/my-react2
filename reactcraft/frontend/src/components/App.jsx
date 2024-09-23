@@ -1,6 +1,12 @@
+import { Body } from "./Body.js";
+import { Header } from "./Header.js";
+
 const App = () => {
   return (
-    <div>main page</div>
+    <div>
+      <Header />
+      <Body />
+    </div>
   );
 };
 
