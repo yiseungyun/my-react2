@@ -1,5 +1,7 @@
 import { createElement } from '../utils/createElement.js';
 
-export const Header = () => {
+const Header = () => {
   return <div>헤더</div>;
 };
+
+export default Header;

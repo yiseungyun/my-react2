@@ -1,6 +1,6 @@
 import { createElement } from '../utils/createElement.js';
 
-export const Body = () => {
+const Body = () => {
   return (
     <div>
       <p>바디</p>
@@ -8,3 +8,5 @@ export const Body = () => {
     </div>
   );
 };
+
+export default Body;
