@@ -1,21 +1,24 @@
-export function render(component, container) {
-  if (typeof component === 'string') {
-      container.appendChild(document.createTextNode(component));
-      return;
+export const render = (element, container) => {
+  if (typeof element === 'string' || typeof element === 'number') {
+    container.appendChild(document.createTextNode(element));
+    return;
   }
 
-  const element = document.createElement(component.type);
+  const component = document.createElement(element.type);
 
-  // props 설정
-  Object.entries(component.props).forEach(([key, value]) => {
-      if (key !== 'children') {
-          element.setAttribute(key, value);
+  Object.entries(element.props).forEach(([key, value]) => {
+    if (key !== 'children') {
+      if (key.startsWith('on') && typeof value === 'function') {
+        const eventType = key.toLowerCase().substring(2);
+        component.addEventListener(eventType, value);
+      } else {
+        component.setAttribute(key, value);
       }
+    }
   });
 
-  // children 처리
-  const children = component.props.children || [];
-  children.forEach(child => render(child, element));
+  const children = element.props.children || [];
+  children.forEach(child => render(child, component));
 
-  container.appendChild(element);
+  container.appendChild(component);
 }
