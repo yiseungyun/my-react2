@@ -18,7 +18,7 @@ export const render = (element, container) => {
   });
 
   const children = element.props.children || [];
-  children.forEach(child => render(child, component));
+  children.forEach((child) => render(child, component));
 
   container.appendChild(component);
-}
+};
