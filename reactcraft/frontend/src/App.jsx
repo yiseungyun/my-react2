@@ -1,10 +1,9 @@
-import { createElement } from './utils/createElement.js';
+import Home from './pages/Home.js';
+import { createElement } from './core/createElement.js';
 
 const App = () => {
   return (
-    <div>
-      안녕하세요
-    </div>
+    <Home />
   );
 };
 

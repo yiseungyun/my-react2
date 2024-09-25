@@ -1,5 +1,5 @@
-import { render } from './utils/render.js';
-import { createElement } from './utils/createElement.js';
+import { render } from './core/render.js';
+import { createElement } from './core/createElement.js';
 import App from './App.js';
 
 const root = document.getElementById('root');

@@ -4,6 +4,11 @@ export const render = (element, container) => {
     return;
   }
 
+  if (typeof element.type === 'function') {
+    const componentElement = element.type(element.props);
+    return render(componentElement, container);
+  }
+
   const component = document.createElement(element.type);
 
   Object.entries(element.props).forEach(([key, value]) => {
@@ -18,7 +23,9 @@ export const render = (element, container) => {
   });
 
   const children = element.props.children || [];
-  children.forEach((child) => render(child, component));
+  if (children) {
+    children.forEach((child) => render(child, component));
+  }
 
   container.appendChild(component);
 };
