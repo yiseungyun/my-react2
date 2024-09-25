@@ -12,7 +12,7 @@ export default {
     [
       '@babel/plugin-transform-react-jsx',
       {
-        pragma: 'createElement',
+        pragma: 'React.createElement',
       },
     ],
   ],

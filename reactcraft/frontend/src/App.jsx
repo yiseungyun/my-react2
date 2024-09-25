@@ -1,5 +1,5 @@
 import Home from './pages/Home.js';
-import { createElement } from './core/createElement.js';
+import { React } from './core/react.js';
 
 const App = () => {
   return (

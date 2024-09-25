@@ -1,18 +1,19 @@
-import { createElement } from '../core/createElement.js';
+import { React } from "../core/react.js";
+import Todos from "./Todos.js";
 
 const Home = () => {
-  // const [count, setCount] = useState(0);
-  let count = 0;
+  const [count, setCount] = React.useState(0);
 
   return (
     <div>
       <h1>{count}</h1>
-      <button onClick={() => { setCount(count + 1) }}>
+      <button onClick={() => { setCount(count => count + 1) }}>
         증가
       </button>
-      <button onClick={() => { setCount(count - 1) }}>
+      <button onClick={() => { setCount(count => count - 1) }}>
         감소
       </button>
+      <Todos />
     </div>
   );
 };
