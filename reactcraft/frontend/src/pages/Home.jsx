@@ -1,8 +1,8 @@
 import { createElement } from '../core/createElement.js';
-import { useState } from '../core/react.js';
 
 const Home = () => {
-  const [count, setCount] = useState(0);
+  // const [count, setCount] = useState(0);
+  let count = 0;
 
   return (
     <div>
