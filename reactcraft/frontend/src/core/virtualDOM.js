@@ -1,32 +1,32 @@
-export const createRealDOM = (element, parentIndex = 0) => {
+export const createRealDOM = (element) => {
     if (typeof element === 'string' || typeof element === 'number') {
         return document.createTextNode(element);
     }
 
     if (typeof element.type === 'function') {
         const componentElement = element.type(element.props); 
-        return createRealDOM(componentElement, parentIndex); 
+        return createRealDOM(componentElement); 
     }
 
-    const virtualDOM = document.createElement(element.type);
+    const realDOM = document.createElement(element.type);
 
     Object.entries(element.props).forEach(([key, value]) => {
         if (key !== 'children') {
             if (key.startsWith('on') && typeof value === 'function') {
                 const eventType = key.toLowerCase().substring(2);
-                virtualDOM.addEventListener(eventType, value);
+                realDOM.addEventListener(eventType, value);
             } else {
-                virtualDOM.setAttribute(key, value);
+                realDOM.setAttribute(key, value);
             }
         }
     });
 
     const children = element.props.children || [];
-    children.forEach((child, i) => {
-        virtualDOM.appendChild(createRealDOM(child, parentIndex+i+1));
+    children.forEach((child) => {
+        realDOM.appendChild(createRealDOM(child));
     });
 
-    return virtualDOM;
+    return realDOM;
 };
 
 export const updateDOM = (parent, newNode, oldNode) => {
