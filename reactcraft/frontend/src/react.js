@@ -1,5 +1,6 @@
-// TODO: 추후 파일로 분리하기 -> 전부 구현한 뒤 분리할 예정
+// TODO: 추후 파일로 분리하기 -> 가상 돔/useState 구현한 뒤 분리할 예정
 export const React = {
+  _virtualDOM: null,
   _currentComponent: null,
   _rootComponent: null,
   _updateQueue: [],
@@ -35,7 +36,7 @@ export const React = {
       this._scheduleUpdate();
     };
 
-    this._stateIndex.set(component, index + 1);
+    this._stateIndex.set(component, index+1);
     return [componentStates[index], setState];
   },
 
@@ -43,8 +44,8 @@ export const React = {
     return {
       type,
       props: {
-          ...props,
-          children: children.flat(),
+        ...props,
+        children: children.flat()
       }
     };
   },
@@ -52,18 +53,39 @@ export const React = {
   render(element, container) {
     this._rootComponent = element;
     this._container = container;
-    this._updateDOM(container, element);
+    this._virtualDOM = this._createVirtualDOM(element);
+    this._updateDOM(container, this._virtualDOM);
   },
 
-  _updateDOM(container, element) {
+  _updateDOM(container, virtualDOM) {
     container.innerHTML = '';
-    const dom = this._createRealDOM(element);
+    const dom = this._createRealDOM(virtualDOM);
     container.appendChild(dom);
   },
 
-  _createRealDOM(element) {
+  _createVirtualDOM(element) {
     if (typeof element === 'string' || typeof element === 'number') {
-      return document.createTextNode(element);
+      return { type: 'TEXT_ELEMENT', props: { value: element } };
+    }
+
+    if (typeof element.type === 'function') {
+      this._currentComponent = element.type;
+      const componentElement = element.type(element.props);
+      return this._createVirtualDOM(componentElement);
+    }
+
+    return {
+      type: element.type,
+      props: {
+        ...element.props,
+        children: (element.props.children || []).map(this._createVirtualDOM.bind(this))
+      }
+    }
+  },
+
+  _createRealDOM(element) {
+    if (element.type === 'TEXT_ELEMENT') {
+      return document.createTextNode(element.props.value);
     }
 
     if (typeof element.type === 'function') {
@@ -105,12 +127,16 @@ export const React = {
     }, 0);
   },
 
+  _diffVirtualDOM(prevDOM, currentDOM) {
+    // TODO: 이전 돔과 현재 돔 비교 로직 작성
+  },
+
   _updateComponent(component) {
     this._currentComponent = component;
     this._stateIndex.set(component, 0);
-    const newElement = component();
-    console.log(newElement.parentNode);
-    this._updateDOM(this._container, newElement);
-    // 실제 DOM 추가 (가상 돔 도입 시 변경)
+    const newVirtualDOM = this._createVirtualDOM(this._rootComponent);
+
+    // 이전 가상돔과 현재 생성한 가상돔 비교 
+    //const patches = this._diffVirtualDOM(this._virtualDOM, newVirtualDOM);
   }
 };
