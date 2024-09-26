@@ -1,17 +1,21 @@
+// TODO: 추후 파일로 분리하기 -> 전부 구현한 뒤 분리할 예정
 export const React = {
   _currentComponent: null,
   _rootComponent: null,
   _updateQueue: [],
   _states: new Map(),
+  _stateIndex: new Map(),
   _components: new Map(),
 
   useState(initialState) {
     const component = this._currentComponent;
+    
     if (!this._states.has(component)) {
       this._states.set(component, []);
+      this._stateIndex.set(component, 0);
     }
     const componentStates = this._states.get(component);
-    const index = componentStates.length;
+    const index = this._stateIndex.get(component);
 
     if (componentStates[index] === undefined) {
       componentStates[index] = initialState;
@@ -25,27 +29,24 @@ export const React = {
       if (newState === componentStates[index]) return;
       if (JSON.stringify(newState) === JSON.stringify(componentStates[index])) return;
 
-      console.log(newState);
       componentStates[index] = newState;
-      console.log("컴포넌트의 상태는 ", componentStates[index]);
       
       this._updateQueue.push(component);
       this._scheduleUpdate();
     };
 
+    this._stateIndex.set(component, index + 1);
     return [componentStates[index], setState];
   },
 
   createElement(type, props, ...children) {
-    const element = {
-        type,
-        props: {
-            ...props,
-            children: children.flat(),
-        },
+    return {
+      type,
+      props: {
+          ...props,
+          children: children.flat(),
+      }
     };
-
-    return element;
   },
 
   render(element, container) {
@@ -106,9 +107,10 @@ export const React = {
 
   _updateComponent(component) {
     this._currentComponent = component;
-    const props = this._components.get(component).props;
-    const newElement = component(props);
-    // TODO: 렌더링 구현 X
-    // this._updateDOM(this._container, this._rootComponent);
+    this._stateIndex.set(component, 0);
+    const newElement = component();
+    console.log(newElement.parentNode);
+    this._updateDOM(this._container, newElement);
+    // 실제 DOM 추가 (가상 돔 도입 시 변경)
   }
 };

@@ -1,4 +1,4 @@
-import { React } from "../core/react.js";
+import { React } from "../react.js";
 
 const Todos = () => {
   const [todos, setTodos] = React.useState('투두!');
