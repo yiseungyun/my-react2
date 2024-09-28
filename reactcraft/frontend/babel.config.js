@@ -5,8 +5,7 @@ export default {
       {
         modules: false,
       },
-    ],
-    '@babel/preset-react',
+    ]
   ],
   plugins: [
     [

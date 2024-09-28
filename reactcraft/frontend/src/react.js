@@ -1,4 +1,4 @@
-// TODO: 추후 파일로 분리하기 -> 가상 돔/useState 구현한 뒤 분리할 예정
+// TODO: 추후 파일로 분리하기 -> 가상 돔/useState 구현한 뒤 분리
 export const React = {
   _virtualDOM: null,
   _currentComponent: null,
@@ -6,7 +6,6 @@ export const React = {
   _updateQueue: [],
   _states: new Map(),
   _stateIndex: new Map(),
-  _components: new Map(),
 
   useState(initialState) {
     const component = this._currentComponent;
@@ -43,6 +42,7 @@ export const React = {
   createElement(type, props, ...children) {
     return {
       type,
+      key: props?.key || null,
       props: {
         ...props,
         children: children.flat()
@@ -90,9 +90,6 @@ export const React = {
 
     if (typeof element.type === 'function') {
       this._currentComponent = element.type;
-      if (!this._components.has(element.type)) {
-        this._components.set(element.type, element);
-      }
       const componentElement = element.type(element.props);
       return this._createRealDOM(componentElement);
     }
@@ -128,7 +125,56 @@ export const React = {
   },
 
   _diffVirtualDOM(prevDOM, currentDOM) {
-    // TODO: 이전 돔과 현재 돔 비교 로직 작성
+    console.log(prevDOM);
+    console.log(currentDOM);
+    if (!prevDOM) {
+      return { status: 'CREATE_DOM', currentDOM };
+    }
+
+    if (!currentDOM) {
+      return { status: 'REMOVE_DOM' };
+    }
+
+    // 1. 타입 비교
+    if (prevDOM.type !== currentDOM.type) {
+      return { status: 'REPLACE_DOM', currentDOM };
+    }
+
+    if (prevDOM.type === 'TEXT_ELEMENT' && prevDOM.value !== currentDOM.value) {
+      return { status: 'REPLACE_TEXT', currentDOM };
+    }
+
+    // 2. 키 비교
+
+    // 3. 속성 비교
+    const propsPatches = this._diffProps(prevDOM.props, currentDOM.props);
+
+    // 4. 자식 비교
+    const childrenPatches = this._diffChildren(prevDOM.children, currentDOM.children);
+  },
+
+  _diffProps(prevProps, currentProps) {
+    let patches = [];
+
+    // 이전에 없던 prop이 새로 생긴 경우
+    Object.entries(currentProps).forEach(([key, value]) => {
+      if (key !== 'children' && prevProps[key] !== value) {
+        patches.push({ status: 'CREATE_PROP', key, value });
+      }
+    })
+
+    // 이전에 있던 속성이 현재 없는 경우
+    Object.entries(prevProps).forEach(([key, value]) => {
+      if (key !== 'children' && !(key in currentProps)) {
+        patches.push({ status: 'REMOVE_PROP', key });
+      }
+    })
+
+    return patches;
+  },
+
+  _diffChildren() {
+
   },
 
   _updateComponent(component) {
@@ -136,7 +182,6 @@ export const React = {
     this._stateIndex.set(component, 0);
     const newVirtualDOM = this._createVirtualDOM(this._rootComponent);
 
-    // 이전 가상돔과 현재 생성한 가상돔 비교 
-    //const patches = this._diffVirtualDOM(this._virtualDOM, newVirtualDOM);
+    const patches = this._diffVirtualDOM(this._virtualDOM, newVirtualDOM);
   }
 };
