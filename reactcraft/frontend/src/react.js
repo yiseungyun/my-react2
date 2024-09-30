@@ -1,8 +1,10 @@
 // TODO: 추후 파일로 분리하기 -> 가상 돔/useState 구현한 뒤 분리
 export const React = {
   _virtualDOM: null,
+  _realDOMMap: new Map(),
   _currentComponent: null,
   _rootComponent: null,
+  _container: null,
   _updateQueue: [],
   _states: new Map(),
   _stateIndex: new Map(),
@@ -40,11 +42,12 @@ export const React = {
   },
 
   createElement(type, props, ...children) {
+    const { key, ...restProps } = props || {};
     return {
       type,
-      key: props?.key || null,
+      key: key,
       props: {
-        ...props,
+        ...restProps,
         children: children.flat()
       }
     };
@@ -85,7 +88,9 @@ export const React = {
 
   _createRealDOM(element) {
     if (element.type === 'TEXT_ELEMENT') {
-      return document.createTextNode(element.props.value);
+      const textNode = document.createTextNode(element.props.value);
+      this._realDOMMap.set(element, textNode);
+      return textNode;
     }
 
     if (typeof element.type === 'function') {
@@ -95,6 +100,7 @@ export const React = {
     }
 
     const dom = document.createElement(element.type);
+    this._realDOMMap.set(element, dom);
 
     Object.entries(element.props).forEach(([key, value]) => {
       if (key !== 'children') {
@@ -124,56 +130,58 @@ export const React = {
     }, 0);
   },
 
-  _diffVirtualDOM(prevDOM, currentDOM) {
-    console.log(prevDOM);
-    console.log(currentDOM);
+  _getRealDOM(virtualDOM) {
+    return this._realDOMMap.get(virtualDOM);
+  },
+
+  _updatePatchDOM(parentDOM, prevDOM, currentDOM) {
     if (!prevDOM) {
-      return { status: 'CREATE_DOM', currentDOM };
+      parentDOM.appendChild(this._createRealDOM(currentDOM));
+      return;
     }
-
     if (!currentDOM) {
-      return { status: 'REMOVE_DOM' };
+      parentDOM.removeChild(this._getRealDOM(prevDOM));
+      return;
     }
 
-    // 1. 타입 비교
     if (prevDOM.type !== currentDOM.type) {
-      return { status: 'REPLACE_DOM', currentDOM };
+      parentDOM.replaceChild(this._createRealDOM(currentDOM), this._getRealDOM(prevDOM));
+      return;
+    }
+    if (prevDOM.type === 'TEXT_ELEMENT' && prevDOM.props.value !== currentDOM.props.value) {
+      parentDOM.replaceChild(this._createRealDOM(currentDOM), this._getRealDOM(prevDOM));
+      return;
     }
 
-    if (prevDOM.type === 'TEXT_ELEMENT' && prevDOM.value !== currentDOM.value) {
-      return { status: 'REPLACE_TEXT', currentDOM };
-    }
-
-    // 2. 키 비교
-
-    // 3. 속성 비교
-    const propsPatches = this._diffProps(prevDOM.props, currentDOM.props);
-
-    // 4. 자식 비교
-    const childrenPatches = this._diffChildren(prevDOM.children, currentDOM.children);
+    this._updateAttributes(this._getRealDOM(prevDOM), prevDOM.props, currentDOM.props);
+    this._updateChildren(this._getRealDOM(prevDOM), prevDOM.props.children || [], currentDOM.props.children || []);
   },
 
-  _diffProps(prevProps, currentProps) {
-    let patches = [];
-
-    // 이전에 없던 prop이 새로 생긴 경우
-    Object.entries(currentProps).forEach(([key, value]) => {
-      if (key !== 'children' && prevProps[key] !== value) {
-        patches.push({ status: 'CREATE_PROP', key, value });
-      }
-    })
-
-    // 이전에 있던 속성이 현재 없는 경우
-    Object.entries(prevProps).forEach(([key, value]) => {
+  _updateAttributes(realDOM, prevProps, currentProps) {
+    Object.keys(prevProps).forEach(key => {
       if (key !== 'children' && !(key in currentProps)) {
-        patches.push({ status: 'REMOVE_PROP', key });
+        if (key.startsWith('on')) {
+          const eventType = key.toLowerCase().substring(2);
+          realDOM.removeEventListener(eventType, prevProps[key]);
+        } else {
+          realDOM.removeAttribute(key);
+        }
       }
-    })
+    });
 
-    return patches;
+    Object.keys(currentProps).forEach(key => {
+      if (key !== 'children' && prevProps[key] !== currentProps[key]) {
+        if (key.startsWith('on')) {
+          const eventType = key.toLowerCase().substring(2);
+          realDOM.addEventListener(eventType, currentProps[key]);
+        } else {
+          realDOM.setAttribute(key, currentProps[key]);
+        }
+      }
+    });
   },
 
-  _diffChildren() {
+  _updateChildren(realDOM, prevChildren, currentChildren) {
 
   },
 
@@ -182,6 +190,8 @@ export const React = {
     this._stateIndex.set(component, 0);
     const newVirtualDOM = this._createVirtualDOM(this._rootComponent);
 
-    const patches = this._diffVirtualDOM(this._virtualDOM, newVirtualDOM);
-  }
+    this._updatePatchDOM(this._container, this._virtualDOM, newVirtualDOM);
+
+    this._virtualDOM = newVirtualDOM;
+  },
 };
