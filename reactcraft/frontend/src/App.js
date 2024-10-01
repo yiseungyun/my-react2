@@ -3,7 +3,10 @@ import { React } from './react.js';
 
 const App = () => {
   return (
-    <Home />
+    <div>
+      <Home />
+      <Home />
+    </div>
   );
 };
 

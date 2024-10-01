@@ -1,14 +1,13 @@
 // TODO: 추후 파일로 분리하기 -> 가상 돔/useState 구현한 뒤 분리
 export const React = {
   _virtualDOM: null,
-  _realDOMMap: new Map(),
   _currentComponent: null,
   _rootComponent: null,
   _container: null,
   _updateQueue: [],
   _states: new Map(),
   _stateIndex: new Map(),
-
+  
   useState(initialState) {
     const component = this._currentComponent;
     
@@ -77,19 +76,20 @@ export const React = {
       return this._createVirtualDOM(componentElement);
     }
 
-    return {
+    const virtualElement = {
       type: element.type,
       props: {
         ...element.props,
-        children: (element.props.children || []).map(this._createVirtualDOM.bind(this))
+        children: (element.props.children || []).map(child => this._createVirtualDOM(child))
       }
-    }
+    };
+
+    return virtualElement;
   },
 
   _createRealDOM(element) {
     if (element.type === 'TEXT_ELEMENT') {
       const textNode = document.createTextNode(element.props.value);
-      this._realDOMMap.set(element, textNode);
       return textNode;
     }
 
@@ -100,7 +100,6 @@ export const React = {
     }
 
     const dom = document.createElement(element.type);
-    this._realDOMMap.set(element, dom);
 
     Object.entries(element.props).forEach(([key, value]) => {
       if (key !== 'children') {
@@ -130,59 +129,66 @@ export const React = {
     }, 0);
   },
 
-  _getRealDOM(virtualDOM) {
-    return this._realDOMMap.get(virtualDOM);
-  },
-
   _updatePatchDOM(parentDOM, prevDOM, currentDOM) {
     if (!prevDOM) {
       parentDOM.appendChild(this._createRealDOM(currentDOM));
       return;
     }
+
     if (!currentDOM) {
-      parentDOM.removeChild(this._getRealDOM(prevDOM));
+      parentDOM.removeChild(parentDOM.childNodes[0]);
       return;
     }
 
     if (prevDOM.type !== currentDOM.type) {
-      parentDOM.replaceChild(this._createRealDOM(currentDOM), this._getRealDOM(prevDOM));
-      return;
-    }
-    if (prevDOM.type === 'TEXT_ELEMENT' && prevDOM.props.value !== currentDOM.props.value) {
-      parentDOM.replaceChild(this._createRealDOM(currentDOM), this._getRealDOM(prevDOM));
+      parentDOM.replaceChild(this._createRealDOM(currentDOM), parentDOM.childNodes[0]);
       return;
     }
 
-    this._updateAttributes(this._getRealDOM(prevDOM), prevDOM.props, currentDOM.props);
-    this._updateChildren(this._getRealDOM(prevDOM), prevDOM.props.children || [], currentDOM.props.children || []);
+    if (currentDOM.type === 'TEXT_ELEMENT') {
+      if (prevDOM.props.value !== currentDOM.props.value) {
+        const textNode = parentDOM.childNodes[0];
+        textNode.nodeValue = currentDOM.props.value;
+      }
+      return;
+    }
+
+    this._updateAttributes(parentDOM.childNodes[0], prevDOM.props, currentDOM.props);
+    this._updateChildren(parentDOM.childNodes[0], prevDOM.props.children, currentDOM.props.children);
   },
 
-  _updateAttributes(realDOM, prevProps, currentProps) {
+  _updateAttributes(parentDOM, prevProps, currentProps) {
     Object.keys(prevProps).forEach(key => {
-      if (key !== 'children' && !(key in currentProps)) {
+      if (key !== 'children' && key !== 'key' && !(key in currentProps)) {
         if (key.startsWith('on')) {
           const eventType = key.toLowerCase().substring(2);
-          realDOM.removeEventListener(eventType, prevProps[key]);
+          parentDOM.removeEventListener(eventType, prevProps[key]);
         } else {
-          realDOM.removeAttribute(key);
+          parentDOM.removeAttribute(key);
         }
       }
     });
 
     Object.keys(currentProps).forEach(key => {
-      if (key !== 'children' && prevProps[key] !== currentProps[key]) {
+      if (key !== 'children' && key !== 'key' && prevProps[key] !== currentProps[key]) {
         if (key.startsWith('on')) {
           const eventType = key.toLowerCase().substring(2);
-          realDOM.addEventListener(eventType, currentProps[key]);
+          parentDOM.addEventListener(eventType, currentProps[key]);
         } else {
-          realDOM.setAttribute(key, currentProps[key]);
+          parentDOM.setAttribute(key, currentProps[key]);
         }
       }
     });
   },
 
-  _updateChildren(realDOM, prevChildren, currentChildren) {
+  _updateChildren(parentDOM, prevChildren, currentChildren) { 
+    const maxLength = Math.max(prevChildren.length, currentChildren.length);
+    for (let i = 0; i < maxLength; i++) {
+      const prevChild = prevChildren[i];
+      const currentChild = currentChildren[i];
 
+      this._updatePatchDOM(parentDOM, prevChild, currentChild);
+    }
   },
 
   _updateComponent(component) {
