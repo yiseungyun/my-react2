@@ -7,7 +7,7 @@ const Todos = () => {
       <p>투두</p>
       <p>{todos}</p>
       <button onClick={() => {
-        setTodos(todos => todos + '투두!');
+        setTodos(todos + '투두!');
       }}>투두증가</button>
     </div>
   );

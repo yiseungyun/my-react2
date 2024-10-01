@@ -8,17 +8,17 @@ const Home = () => {
   return (
     <div key={'0'}>
       <h1 key={'1'}>{count}</h1>
-      <button onClick={() => { setCount(count => count + 1) }}>
+      <button onClick={() => { setCount(count + 1) }}>
         증가
       </button>
-      <button onClick={() => { setCount(count => count - 1) }}>
+      <button onClick={() => { setCount(count - 1) }}>
         감소
       </button>
       <h1>{count2}</h1>
-      <button onClick={() => { setCount2(count2 => count2 + 1) }}>
+      <button onClick={() => { setCount2(count2 + 1) }}>
         증가
       </button>
-      <button onClick={() => { setCount2(count2 => count2 - 1) }}>
+      <button onClick={() => { setCount2(count2 - 1) }}>
         감소
       </button>
       <Todos />
