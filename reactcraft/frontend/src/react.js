@@ -148,40 +148,39 @@ export const React = {
 
   _updatePatchDOM(parentDOM, prevDOM, currentDOM) {
     if (!prevDOM) {
-      //parentDOM.appendChild(this._createRealDOM(currentDOM));
+      parentDOM.appendChild(this._createRealDOM(currentDOM));
       return;
     }
 
     if (!currentDOM) {
-      //parentDOM.removeChild(parentDOM.childNodes[0]);
+      parentDOM.removeChild(prevDOM.ref);
       return;
     }
 
     if (prevDOM.type !== currentDOM.type) {
-      //parentDOM.replaceChild(this._createRealDOM(currentDOM), parentDOM.childNodes[0]);
+      parentDOM.replaceChild(this._createRealDOM(currentDOM), prevDOM.ref);
       return;
     }
 
     if (currentDOM.type === 'TEXT_ELEMENT') {
       if (prevDOM.props.value !== currentDOM.props.value) {
-        //const textNode = parentDOM.childNodes[0];
-        //textNode.nodeValue = currentDOM.props.value;
+        prevDOM.ref.nodeValue = currentDOM.props.value;
       }
       return;
     }
 
-    //this._updateAttributes(, prevDOM.props, currentDOM.props);
-    //this._updateChildren(, prevDOM.props.children, currentDOM.props.children);
+    this._updateAttributes(prevDOM.ref, prevDOM.props, currentDOM.props);
+    this._updateChildren(prevDOM.ref, prevDOM.props.children, currentDOM.props.children);
   },
 
-  _updateAttributes(parentDOM, prevProps, currentProps) {
+  _updateAttributes(dom, prevProps, currentProps) {
     Object.keys(prevProps).forEach(key => {
       if (key !== 'children' && key !== 'key' && !(key in currentProps)) {
         if (key.startsWith('on')) {
           const eventType = key.toLowerCase().substring(2);
-          parentDOM.removeEventListener(eventType, prevProps[key]);
+          dom.removeEventListener(eventType, prevProps[key]);
         } else {
-          parentDOM.removeAttribute(key);
+          dom.removeAttribute(key);
         }
       }
     });
@@ -190,9 +189,9 @@ export const React = {
       if (key !== 'children' && key !== 'key' && prevProps[key] !== currentProps[key]) {
         if (key.startsWith('on')) {
           const eventType = key.toLowerCase().substring(2);
-          parentDOM.addEventListener(eventType, currentProps[key]);
+          dom.addEventListener(eventType, currentProps[key]);
         } else {
-          parentDOM.setAttribute(key, currentProps[key]);
+          dom.setAttribute(key, currentProps[key]);
         }
       }
     });
@@ -213,9 +212,7 @@ export const React = {
     this._stateIndex.set(component, 0);
     const newVirtualDOM = this._createVirtualDOM(this._rootComponent, this._virtualDOM);
 
-    console.log(this._virtualDOM);
-    console.log(newVirtualDOM);
-    //this._updatePatchDOM(this._container, this._virtualDOM, newVirtualDOM);
+    this._updatePatchDOM(this._container, this._virtualDOM, newVirtualDOM);
 
     this._virtualDOM = newVirtualDOM;
   },
