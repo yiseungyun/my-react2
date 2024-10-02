@@ -5,39 +5,35 @@ export const React = {
   _rootComponent: null,
   _container: null,
   _updateQueue: [],
-  _states: new Map(),
-  _stateIndex: new Map(),
+  _states: [],
+  _stateKey: 0,
   
   useState(initialState) {
     const component = this._currentComponent;
-    
-    if (!this._states.has(component)) {
-      this._states.set(component, []);
-      this._stateIndex.set(component, 0);
-    }
-    const componentStates = this._states.get(component);
-    const index = this._stateIndex.get(component);
 
-    if (componentStates[index] === undefined) {
-      componentStates[index] = initialState;
+    if (this._states.length === this._stateKey) {
+      this._states.push(initialState);
     }
+
+    const currentIndex = this._stateKey;
+    const state = this._states[this._stateKey];
 
     const setState = (newState) => {
       if (typeof newState === 'function') {
-        newState = newState(componentStates[index]);
+        newState = newState(this._states[currentIndex]);
       }
 
-      if (newState === componentStates[index]) return;
-      if (JSON.stringify(newState) === JSON.stringify(componentStates[index])) return;
+      if (newState === this._states[currentIndex]) return;
+      if (JSON.stringify(newState) === JSON.stringify(this._states[currentIndex])) return;
 
-      componentStates[index] = newState;
+      this._states[currentIndex] = newState;
       
       this._updateQueue.push(component);
       this._scheduleUpdate();
     };
 
-    this._stateIndex.set(component, index+1);
-    return [componentStates[index], setState];
+    this._stateKey += 1;
+    return [state, setState];
   },
 
   createElement(type, props, ...children) {
@@ -209,9 +205,10 @@ export const React = {
 
   _updateComponent(component) {
     this._currentComponent = component;
-    this._stateIndex.set(component, 0);
+    this._stateKey = 0;
     const newVirtualDOM = this._createVirtualDOM(this._rootComponent, this._virtualDOM);
 
+    //console.log(this._states);
     this._updatePatchDOM(this._container, this._virtualDOM, newVirtualDOM);
 
     this._virtualDOM = newVirtualDOM;

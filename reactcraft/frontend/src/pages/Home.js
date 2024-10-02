@@ -6,8 +6,8 @@ const Home = () => {
   const [count2, setCount2] = React.useState(0);
 
   return (
-    <div key={'0'}>
-      <h1 key={'1'}>{count}</h1>
+    <div>
+      <h1>{count}</h1>
       <button onClick={() => { setCount(count + 1) }}>
         증가
       </button>
