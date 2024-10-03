@@ -1,5 +1,7 @@
 // TODO: diff(변경된 부분 비교)/update(변경 사항 업데이트) 로직 분리
 
+import { createRealDOM } from "../render/createRealDOM.js";
+
 export function updatePatchDOM(parentDOM, prevDOM, currentDOM) {
   if (!prevDOM) {
     parentDOM.appendChild(createRealDOM(currentDOM));
