@@ -1,9 +1,9 @@
-import { React } from "../react.js";
+import { useState, createElement } from "../react.js";
 import Todos from "./Todos.js";
 
 const Home = () => {
-  const [count, setCount] = React.useState(0);
-  const [count2, setCount2] = React.useState(0);
+  const [count, setCount] = useState(0);
+  const [count2, setCount2] = useState(0);
 
   return (
     <div>

@@ -1,7 +1,7 @@
-import { React } from "../react.js";
+import { useState, createElement } from "../react.js";
 
 const Todos = () => {
-  const [todos, setTodos] = React.useState('투두!');
+  const [todos, setTodos] = useState('투두!');
   return (
     <div>
       <p>투두</p>
