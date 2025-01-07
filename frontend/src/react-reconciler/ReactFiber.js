@@ -27,7 +27,29 @@ function createFiber(tag, pendingProps, key) {
 	};
 }
 
+function createFiberFromElement(element) {
+	const { type, key, props } = element;
+	
+	let tag;
+  if (typeof type === 'function') {
+    tag = type.prototype?.isReactComponent 
+      ? ClassComponent 
+      : FunctionComponent;
+  } else if (typeof type === 'string') {
+    tag = HostComponent;
+  } else if (type === TEXT_ELEMENT) {
+    tag = HostText;
+  }
+
+  const fiber = createFiber(tag, props, key);
+  fiber.type = type;
+  fiber.elementType = type;
+
+  return fiber;
+}
+
 export { 
   createHostRootFiber,
-  createFiber
+  createFiber,
+  createFiberFromElement
 }
