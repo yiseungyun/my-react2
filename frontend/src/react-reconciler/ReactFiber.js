@@ -1,4 +1,4 @@
-import { HostRoot } from "../shared/ReactSymbol";
+import { HostRoot } from "./ReactWorkTag";
 
 function createHostRootFiber() {
 	return createFiber(HostRoot, null, null);
