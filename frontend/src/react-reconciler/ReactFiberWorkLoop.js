@@ -1,0 +1,7 @@
+function scheduleUpdateOnFiber() {
+
+}
+
+export {
+  scheduleUpdateOnFiber
+}

@@ -1,5 +1,5 @@
 import App from './App.js';
-import { createElement, render } from './react.js';
 
-const root = document.getElementById('root');
-render(<App />, root)
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<App />);
