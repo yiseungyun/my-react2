@@ -1,3 +1,5 @@
+import { HostRoot } from "../shared/ReactSymbol";
+
 function createHostRootFiber() {
 	return createFiber(HostRoot, null, null);
 }
