@@ -1,5 +1,5 @@
-import { createFiberFromElement } from "./ReactFiber";
-import { Placement, Update } from "./ReactFiberFlag";
+import { createFiberFromElement } from "./ReactFiber.js";
+import { Placement, Update } from "./ReactFiberFlag.js";
 import { ClassComponent, FunctionComponent, HostComponent, HostRoot, HostText, TEXT_ELEMENT } from "./ReactWorkTag";
 
 function beginWork(current, workInProgress) {

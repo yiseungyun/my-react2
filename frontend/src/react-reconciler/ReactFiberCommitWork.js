@@ -1,4 +1,4 @@
-import { Deletion, Placement, Update } from "./ReactFiberFlag";
+import { Deletion, Placement, Update } from "./ReactFiberFlag.js";
 
 function commitRoot(root) {
   const finishedWork = root.finishedWork;

@@ -1,5 +1,5 @@
-import { scheduleUpdateOnFiber } from "./ReactFiberWorkLoop";
-import { enqueueUpdate } from "./ReactUpdateQueue";
+import { scheduleUpdateOnFiber } from "./ReactFiberWorkLoop.js";
+import { enqueueUpdate } from "./ReactUpdateQueue.js";
 
 function updateContainer(element, root) {
   const current = root.current;

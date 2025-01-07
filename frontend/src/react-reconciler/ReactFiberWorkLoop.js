@@ -1,6 +1,6 @@
-import { beginWork } from "./ReactFiberBeginWork";
-import { commitRoot } from "./ReactFiberCommitWork";
-import { completeWork } from "./ReactFiberCompleteWork";
+import { beginWork } from "./ReactFiberBeginWork.js";
+import { commitRoot } from "./ReactFiberCommitWork.js";
+import { completeWork } from "./ReactFiberCompleteWork.js";
 
 function scheduleUpdateOnFiber(root) {
   // TODO: 우선순위 계산

@@ -1,4 +1,4 @@
-import { ClassComponent, FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTag";
+import { ClassComponent, FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTag.js";
 
 function completeWork(current, workInProgress) {
 	switch (workInProgress.tag) {

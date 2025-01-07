@@ -1,4 +1,4 @@
-import { HostRoot } from "./ReactWorkTag";
+import { HostRoot } from "./ReactWorkTag.js";
 
 function createHostRootFiber() {
 	return createFiber(HostRoot, null, null);
