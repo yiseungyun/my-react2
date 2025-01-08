@@ -3,6 +3,8 @@ import { enqueueUpdate } from "./ReactUpdateQueue.js";
 
 function updateContainer(element, root) {
   const current = root.current;
+
+  current.pendingProps = { element };
   
   // 업데이트 생성 및 예약
   const update = {

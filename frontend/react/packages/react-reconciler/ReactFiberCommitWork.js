@@ -3,6 +3,8 @@ import { Deletion, Placement, Update } from "./ReactFiberFlag.js";
 function commitRoot(root) {
   const finishedWork = root.finishedWork;
 
+  console.log("finishedWork", finishedWork);
+
   // 완료된 작업이 없으면 종료
   if (finishedWork === null) {
     return null;

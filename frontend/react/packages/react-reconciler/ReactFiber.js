@@ -1,13 +1,17 @@
-import { HostRoot } from "./ReactWorkTag.js";
+import { NoFlags, Placement } from "./ReactFiberFlag.js";
+import { ClassComponent, FunctionComponent, HostComponent, HostRoot, HostText, TEXT_ELEMENT } from "./ReactWorkTag.js";
 
 function createHostRootFiber() {
 	return createFiber(HostRoot, null, null);
 }
 
 function createFiber(tag, pendingProps, key) {
+	const props = pendingProps ?? {};
+  const normalizedKey = key === null ? null : String(key);
+
 	return {
 		tag,
-		key,
+		key: normalizedKey,
 		type: null,
 		elementType: null,
 		stateNode: null,
@@ -16,24 +20,29 @@ function createFiber(tag, pendingProps, key) {
 		sibling: null,
 		index: 0,
 		ref: null,
-		pendingProps,
+		pendingProps: {
+      ...props,
+      children: props.children || []
+    },
 		memoizedProps: null,
 		updateQueue: null,
 		memoizedState: null,
-		flags: 'Placement',
-		subtreeFlgs: 'NoFlags',
+		flags: Placement,
+		subtreeFlgs: NoFlags,
 		deletions: null,
 		alternate: null,
 	};
 }
 
 function createFiberFromElement(element) {
+	if (!element) return null;
+
 	const { type, key, props } = element;
-	
 	let tag;
+
   if (typeof type === 'function') {
     tag = type.prototype?.isReactComponent 
-      ? ClassComponent 
+      ? ClassComponent
       : FunctionComponent;
   } else if (typeof type === 'string') {
     tag = HostComponent;
@@ -41,7 +50,17 @@ function createFiberFromElement(element) {
     tag = HostText;
   }
 
-  const fiber = createFiber(tag, props, key);
+	if (!props) {
+		return createFiber(tag, {}, key);
+	}
+
+	const normalizedKey = key === null ? null : String(key);
+	const children = props.children || [];
+
+  const fiber = createFiber(tag, {
+		...props,
+		children: Array.isArray(children) ? children : [children].filter(Boolean)
+	}, normalizedKey);
   fiber.type = type;
   fiber.elementType = type;
 

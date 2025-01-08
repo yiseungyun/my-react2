@@ -6,7 +6,6 @@ let workInProgress = null;
 
 function scheduleUpdateOnFiber(root) {
   // TODO: 우선순위 계산
-  
   performSyncWorkOnRoot(root);
   
   // TODO: 비동기 업데이트의 경우 스케줄링 
@@ -23,16 +22,44 @@ function performSyncWorkOnRoot(root) {
 
 function renderRootSync(root) {
   // TODO: 현재 우선순위 저장
+  const current = root.current;
+  workInProgress = createWorkInProgress(current, null);
   
   try {
     // 워크루프 실행
     workLoopSync(root);
     
     // 완료된 작업 반환
-    return root.current.alternate;
+    console.log("workInProgress", workInProgress);
+    return workInProgress;
   } finally {
     // TODO: 이전 우선순위 복원
   }
+}
+
+function createWorkInProgress(current, pendingProps) {
+  if (!current) return null;
+  let workInProgress = current.alternate;
+
+  if (workInProgress === null) {
+    workInProgress = {
+      ...current,
+      alternate: current,
+      pendingProps: pendingProps || current.pendingProps,
+      flags: 0,
+      child: null,
+      memoizedProps: null,
+      memoizedState: null
+    };
+    current.alternate = workInProgress;
+  } else {
+    workInProgress.pendingProps = pendingProps || current.pendingProps;
+    workInProgress.flags = 0;
+    workInProgress.child = null;
+    current.alternate = workInProgress;
+  }
+
+  return workInProgress;
 }
 
 function workLoopSync() {
@@ -44,7 +71,7 @@ function workLoopSync() {
 
 function performUnitOfWork(unitOfWork) {
   // 현재 작업 중인 Fiber의 alternate 가져오기
-  const current = unitOfWork.alternate;
+  const current = unitOfWork.alternate || null;
 
   // beginWork를 호출하여 자식 Fiber들 처리
   let next = beginWork(current, unitOfWork);
@@ -67,9 +94,14 @@ function completeUnitOfWork(unitOfWork) {
 
   do {
     // 현재 Fiber의 alternate 가져오기
-    const current = completedWork.alternate;
+    const current = completedWork.alternate || null;
     // 부모 Fiber를 가져오기
-    const returnFiber = completedWork.return;
+    const returnFiber = completedWork.return || null;
+
+    if (returnFiber === null && completedWork !== null) {
+      workInProgress = null;
+      return;
+    }
 
     // 현재 Fiber 노드의 작업을 완료
     completeWork(current, completedWork);
@@ -84,6 +116,10 @@ function completeUnitOfWork(unitOfWork) {
 
     // 형제가 없으면 부모로 올라가기
     completedWork = returnFiber;
+    if (completedWork === null) {
+      workInProgress = null;
+      return;
+    }
     workInProgress = completedWork;
   } while (completedWork !== null);
 }

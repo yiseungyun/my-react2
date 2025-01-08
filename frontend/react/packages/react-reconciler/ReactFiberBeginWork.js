@@ -21,6 +21,7 @@ function beginWork(current, workInProgress) {
 		case HostRoot: {
 			const root = workInProgress.stateNode;
 			const nextChildren = workInProgress.pendingProps.element;
+			console.log('HostRoot nextChildren:', nextChildren);
 			
 			reconcileChildren(current, workInProgress, nextChildren);
 			return workInProgress.child;
@@ -30,6 +31,7 @@ function beginWork(current, workInProgress) {
 			const Component = workInProgress.type;
 			const props = workInProgress.pendingProps;
 			
+			console.log('Function Component props:', props);
 			// 함수형 컴포넌트 실행해 자식 엘리먼트 얻기
 			const nextChildren = Component(props);
 			
@@ -77,6 +79,12 @@ function beginWork(current, workInProgress) {
 }
 
 function reconcileChildren(current, workInProgress, nextChildren) {
+	console.log('reconcileChildren input:', {
+		current,
+		workInProgress,
+		nextChildren
+	});
+	
   // 텍스트 노드 반환
 	if (typeof nextChildren === 'string' || typeof nextChildren === 'number') {
 		nextChildren = {
@@ -99,20 +107,21 @@ function reconcileChildren(current, workInProgress, nextChildren) {
 	// 기존 Fiber와 새로운 자식을 비교하며 업데이트
 	for (; oldFiber !== null && newIdx < nextChildren.length; newIdx++) {
     const newChild = nextChildren[newIdx];
-    const sameType = oldFiber.type === newChild.type;
+		let newFiber;
+    const sameType = oldFiber && oldFiber.type === newChild.type;
 
     if (sameType) {
       // 타입이 같으면 Fiber 노드 업데이트
-      const newFiber = createFiberFromElement(newChild);
+      newFiber = createFiberFromElement(newChild);
       newFiber.alternate = oldFiber;
       newFiber.flags = Update;
-      newFiber.return = workInProgress;
     } else {
       // 타입이 다르면 새로운 Fiber 생성
-      const newFiber = createFiberFromElement(newChild);
+      newFiber = createFiberFromElement(newChild);
       newFiber.flags = Placement;
-      newFiber.return = workInProgress;
     }
+
+		newFiber.return = workInProgress;
 
     // Fiber 트리 구성
     if (newIdx === 0) {
@@ -121,7 +130,7 @@ function reconcileChildren(current, workInProgress, nextChildren) {
       previousNewFiber.sibling = newFiber;
     }
     previousNewFiber = newFiber;
-    oldFiber = oldFiber.sibling; // 다음 형제 Fiber로 변경
+    oldFiber = oldFiber?.sibling; // 다음 형제 Fiber로 변경
   }
 
   // 나머지 새로운 자식들 처리
@@ -136,6 +145,9 @@ function reconcileChildren(current, workInProgress, nextChildren) {
       previousNewFiber.sibling = newFiber;
     }
     previousNewFiber = newFiber;
+
+		// newFiber 생성 후
+		console.log('Created newFiber:', newFiber);
   }
 }
 
