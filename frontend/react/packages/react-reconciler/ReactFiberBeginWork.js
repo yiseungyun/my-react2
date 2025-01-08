@@ -19,7 +19,6 @@ function beginWork(current, workInProgress) {
 	
 	switch (workInProgress.tag) {
 		case HostRoot: {
-			const root = workInProgress.stateNode;
 			const nextChildren = workInProgress.pendingProps.element;
 			console.log('HostRoot nextChildren:', nextChildren);
 			
@@ -79,11 +78,9 @@ function beginWork(current, workInProgress) {
 }
 
 function reconcileChildren(current, workInProgress, nextChildren) {
-	console.log('reconcileChildren input:', {
-		current,
-		workInProgress,
-		nextChildren
-	});
+	if (!nextChildren) {
+    nextChildren = [];
+  }
 	
   // 텍스트 노드 반환
 	if (typeof nextChildren === 'string' || typeof nextChildren === 'number') {
@@ -113,41 +110,51 @@ function reconcileChildren(current, workInProgress, nextChildren) {
     if (sameType) {
       // 타입이 같으면 Fiber 노드 업데이트
       newFiber = createFiberFromElement(newChild);
-      newFiber.alternate = oldFiber;
-      newFiber.flags = Update;
+			if (newFiber) {
+				newFiber.alternate = oldFiber;
+				newFiber.flags = Update;
+			}
     } else {
       // 타입이 다르면 새로운 Fiber 생성
       newFiber = createFiberFromElement(newChild);
-      newFiber.flags = Placement;
+			if (newFiber) {
+				newFiber.flags = Placement;
+			}
     }
 
-		newFiber.return = workInProgress;
+		if (newFiber) {
+			newFiber.return = workInProgress;
 
-    // Fiber 트리 구성
-    if (newIdx === 0) {
-      workInProgress.child = newFiber;
-    } else {
-      previousNewFiber.sibling = newFiber;
-    }
-    previousNewFiber = newFiber;
+			// Fiber 트리 구성
+			if (newIdx === 0) {
+				workInProgress.child = newFiber;
+			} else {
+				previousNewFiber.sibling = newFiber;
+			}
+			previousNewFiber = newFiber;
+		}
+
     oldFiber = oldFiber?.sibling; // 다음 형제 Fiber로 변경
   }
 
   // 나머지 새로운 자식들 처리
   for (; newIdx < nextChildren.length; newIdx++) {
     const newFiber = createFiberFromElement(nextChildren[newIdx]);
-    newFiber.flags = Placement;
-    newFiber.return = workInProgress;
-
-    if (newIdx === 0) {
-      workInProgress.child = newFiber;
-    } else {
-      previousNewFiber.sibling = newFiber;
-    }
-    previousNewFiber = newFiber;
-
-		// newFiber 생성 후
-		console.log('Created newFiber:', newFiber);
+		
+		if (newFiber) {
+			newFiber.flags = Placement;
+			newFiber.return = workInProgress;
+	
+			if (newIdx === 0) {
+				workInProgress.child = newFiber;
+			} else {
+				previousNewFiber.sibling = newFiber;
+			}
+			previousNewFiber = newFiber;
+	
+			// newFiber 생성 후
+			console.log('Created newFiber:', newFiber);
+		}
   }
 }
 
