@@ -1,1 +1,1 @@
-export { jsx, jsxs } from './jsx-runtime.js';
+export { jsx, jsxs } from './jsx/RreactJSXElement.js';

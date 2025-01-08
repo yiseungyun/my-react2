@@ -1,6 +1,6 @@
-import { createHostRootFiber } from "../../react-reconciler/ReactFiber.js";
-import { updateContainer } from "../../react-reconciler/ReactFiberReconciler.js";
-import { initializeUpdateQueue } from "../../react-reconciler/ReactUpdateQueue.js";
+import { createHostRootFiber } from "../react-reconciler/ReactFiber.js";
+import { updateContainer } from "../react-reconciler/ReactFiberReconciler.js";
+import { initializeUpdateQueue } from "../react-reconciler/ReactUpdateQueue.js";
 
 function createRoot(container) {
   const root = {

@@ -1,5 +1,4 @@
 import { variable } from "../react.js";
-import { updateComponent } from "../reconciler/updateComponent.js";
 
 let states = [];
 let updateQueue = [];

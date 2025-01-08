@@ -1,16 +1,14 @@
 {
+  "name": "vite-project",
+  "private": true,
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "npx babel src --out-dir dist && npm run copy-react",
-    "copy-react": "mkdir -p dist/react && cp -r react/package dist/react/package",
-    "format": "prettier --write ."
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "react": "file:react",
-    "@babel/cli": "^7.25.6",
-    "@babel/core": "^7.25.2",
-    "@babel/preset-env": "^7.25.4",
-    "@babel/preset-react": "^7.24.7",
-    "prettier": "3.3.3"
+    "vite": "^6.0.7"
   }
 }

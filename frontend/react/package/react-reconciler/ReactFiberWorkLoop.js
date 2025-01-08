@@ -2,6 +2,8 @@ import { beginWork } from "./ReactFiberBeginWork.js";
 import { commitRoot } from "./ReactFiberCommitWork.js";
 import { completeWork } from "./ReactFiberCompleteWork.js";
 
+let workInProgress = null;
+
 function scheduleUpdateOnFiber(root) {
   // TODO: 우선순위 계산
   
@@ -20,9 +22,7 @@ function performSyncWorkOnRoot(root) {
 }
 
 function renderRootSync(root) {
-  // 현재 우선순위 저장
-  const prevPriority = currentUpdatePriority;
-  currentUpdatePriority = SyncLane;
+  // TODO: 현재 우선순위 저장
   
   try {
     // 워크루프 실행
@@ -31,8 +31,7 @@ function renderRootSync(root) {
     // 완료된 작업 반환
     return root.current.alternate;
   } finally {
-    // 이전 우선순위 복원
-    currentUpdatePriority = prevPriority;
+    // TODO: 이전 우선순위 복원
   }
 }
 
