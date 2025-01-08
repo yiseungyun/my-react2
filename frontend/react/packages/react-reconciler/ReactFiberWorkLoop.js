@@ -1,13 +1,13 @@
-import { beginWork } from "./ReactFiberBeginWork.js";
-import { commitRoot } from "./ReactFiberCommitWork.js";
-import { completeWork } from "./ReactFiberCompleteWork.js";
+import { beginWork } from './ReactFiberBeginWork.js';
+import { commitRoot } from './ReactFiberCommitWork.js';
+import { completeWork } from './ReactFiberCompleteWork.js';
 
 let workInProgress = null;
 
 function scheduleUpdateOnFiber(root) {
   // TODO: 우선순위 계산
   performSyncWorkOnRoot(root);
-  // TODO: 비동기 업데이트의 경우 스케줄링 
+  // TODO: 비동기 업데이트의 경우 스케줄링
 }
 
 function performSyncWorkOnRoot(root) {
@@ -23,11 +23,11 @@ function renderRootSync(root) {
   // TODO: 현재 우선순위 저장
   const current = root.current;
   workInProgress = createWorkInProgress(current, null);
-  
+
   try {
     // 워크루프 실행
     workLoopSync(root);
-    
+
     // 완료된 작업 반환
     return workInProgress;
   } finally {
@@ -47,7 +47,7 @@ function createWorkInProgress(current, pendingProps) {
       flags: 0,
       child: null,
       memoizedProps: null,
-      memoizedState: null
+      memoizedState: null,
     };
     current.alternate = workInProgress;
   } else {
@@ -110,6 +110,4 @@ function completeUnitOfWork(unitOfWork) {
   } while (completedWork !== null);
 }
 
-export {
-  scheduleUpdateOnFiber
-}
+export { scheduleUpdateOnFiber };

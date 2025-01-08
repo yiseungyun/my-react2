@@ -1,63 +1,72 @@
-import { ClassComponent, FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTag.js";
+import {
+  ClassComponent,
+  FunctionComponent,
+  HostComponent,
+  HostRoot,
+  HostText,
+} from './ReactWorkTag.js';
 
 function completeWork(current, workInProgress) {
   switch (workInProgress.tag) {
-		case HostRoot: { // 리액트 트리 최상위 노드
-			const rootContainerInstance = workInProgress.stateNode.containerInfo;
-			appendAllChildren(rootContainerInstance, workInProgress);
-			
-			const child = workInProgress.child;
-			if (child !== null) {
-				workInProgress.stateNode.pendingChildren = child;
-			}
-			
-			return null;
-		}
-		
-		case HostComponent: {
-			const type = workInProgress.type;
-			const newProps = workInProgress.pendingProps;
+    case HostRoot: {
+      // 리액트 트리 최상위 노드
+      const rootContainerInstance = workInProgress.stateNode.containerInfo;
+      appendAllChildren(rootContainerInstance, workInProgress);
 
-			if (current === null) { // 최초 마운트
-				const domElement = document.createElement(type);
-				updateDOMProperties(domElement, null, newProps);
-				workInProgress.stateNode = domElement;
-				appendAllChildren(domElement, workInProgress);
-			} else { // 업데이트
-				const instance = workInProgress.stateNode;
-				
-				// props가 변경된 경우
-				if (workInProgress.flags & Update) {
-					updateDOMProperties(
-						instance,
-						current.memoizedProps,
-						newProps
-					);
-				}
-			}
-			
-			return null;
-		}
-		
-		case HostText: { // 텍스트 노드
-			const newText = workInProgress.pendingProps.children;
-			
-			if (current === null) { // 최초 마운트
-				const textNode = document.createTextNode(newText);
-				workInProgress.stateNode = textNode;
-			} else if (workInProgress.flags & Update) { // 업데이트이고 텍스트가 변경된 경우
-				const textNode = workInProgress.stateNode;
-				textNode.nodeValue = newText;
-			}
-			
-			return null;
-		}
-		
-		case FunctionComponent:
-		case ClassComponent: { // 컴포넌트는 특별한 처리 없이 반환 
-			return null;
-		}
-	}
+      const child = workInProgress.child;
+      if (child !== null) {
+        workInProgress.stateNode.pendingChildren = child;
+      }
+
+      return null;
+    }
+
+    case HostComponent: {
+      const type = workInProgress.type;
+      const newProps = workInProgress.pendingProps;
+
+      if (current === null) {
+        // 최초 마운트
+        const domElement = document.createElement(type);
+        updateDOMProperties(domElement, null, newProps);
+        workInProgress.stateNode = domElement;
+        appendAllChildren(domElement, workInProgress);
+      } else {
+        // 업데이트
+        const instance = workInProgress.stateNode;
+
+        // props가 변경된 경우
+        if (workInProgress.flags & Update) {
+          updateDOMProperties(instance, current.memoizedProps, newProps);
+        }
+      }
+
+      return null;
+    }
+
+    case HostText: {
+      // 텍스트 노드
+      const newText = workInProgress.pendingProps.children;
+
+      if (current === null) {
+        // 최초 마운트
+        const textNode = document.createTextNode(newText);
+        workInProgress.stateNode = textNode;
+      } else if (workInProgress.flags & Update) {
+        // 업데이트이고 텍스트가 변경된 경우
+        const textNode = workInProgress.stateNode;
+        textNode.nodeValue = newText;
+      }
+
+      return null;
+    }
+
+    case FunctionComponent:
+    case ClassComponent: {
+      // 컴포넌트는 특별한 처리 없이 반환
+      return null;
+    }
+  }
 }
 
 // DOM 속성 업데이트 함수
@@ -108,7 +117,7 @@ function updateDOMProperties(domElement, oldProps, newProps) {
 // 자식 노드들을 DOM에 추가하는 함수
 function appendAllChildren(parentInstance, workInProgress) {
   let node = workInProgress.child;
-  
+
   while (node !== null) {
     if (node.tag === HostComponent || node.tag === HostText) {
       // DOM 노드인 경우 직접 추가
@@ -134,6 +143,4 @@ function appendAllChildren(parentInstance, workInProgress) {
   }
 }
 
-export {
-  completeWork
-}
+export { completeWork };

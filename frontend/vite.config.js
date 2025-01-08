@@ -11,19 +11,22 @@ function customJSX() {
 
       const result = babel.transformSync(code, {
         plugins: [
-          ['@babel/plugin-transform-react-jsx', {
-            runtime: 'automatic',
-            importSource: path.resolve(__dirname, './react/packages')
-          }]
+          [
+            '@babel/plugin-transform-react-jsx',
+            {
+              runtime: 'automatic',
+              importSource: path.resolve(__dirname, './react/packages'),
+            },
+          ],
         ],
-        filename: id
+        filename: id,
       });
 
       return {
         code: result.code,
-        map: result.map
+        map: result.map,
       };
-    }
+    },
   };
 }
 
@@ -31,7 +34,10 @@ export default defineConfig({
   plugins: [customJSX()],
   resolve: {
     alias: {
-      '/react/packages/jsx-runtime': path.resolve(__dirname, './react/jsx-runtime.js')
-    }
-  }
+      '/react/packages/jsx-runtime': path.resolve(
+        __dirname,
+        './react/jsx-runtime.js',
+      ),
+    },
+  },
 });

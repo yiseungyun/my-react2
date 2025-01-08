@@ -1,20 +1,20 @@
 const REACT_ELEMENT_TYPE = Symbol.for('react.element');
 
-function jsx(type, config, maybeKey) {  
+function jsx(type, config, maybeKey) {
   let key = null;
   let ref = null;
   let props = {};
-  
+
   if (maybeKey !== undefined) {
     key = '' + maybeKey;
   } else if (config && config.key !== undefined) {
     key = '' + config.key;
   }
-  
+
   if (config && config.ref !== undefined) {
     ref = config.ref;
   }
-  
+
   if (config !== null) {
     for (const propName in config) {
       if (
@@ -26,7 +26,7 @@ function jsx(type, config, maybeKey) {
       }
     }
   }
-  
+
   if (type && type.defaultProps) {
     const defaultProps = type.defaultProps;
     for (const propName in defaultProps) {
@@ -42,13 +42,10 @@ function jsx(type, config, maybeKey) {
     key,
     ref,
     props,
-    _owner: null
-  }
+    _owner: null,
+  };
 }
 
 const jsxs = jsx;
 
-export {
-  jsx,
-  jsxs
-}
+export { jsx, jsxs };

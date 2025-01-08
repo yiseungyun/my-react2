@@ -11,5 +11,5 @@ export {
   HostRoot,
   HostComponent,
   HostText,
-  TEXT_ELEMENT 
-}
+  TEXT_ELEMENT,
+};

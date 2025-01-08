@@ -1,4 +1,4 @@
-import { variable } from "../react.js";
+import { variable } from '../react.js';
 
 let states = [];
 let updateQueue = [];
@@ -19,17 +19,18 @@ export function useState(initialState) {
     }
 
     if (newState === states[currentIndex]) return;
-    if (JSON.stringify(newState) === JSON.stringify(states[currentIndex])) return;
+    if (JSON.stringify(newState) === JSON.stringify(states[currentIndex]))
+      return;
 
     states[currentIndex] = newState;
-    
+
     updateQueue.push(component);
     scheduleUpdate();
   };
 
   variable._stateKey += 1;
   return [state, setState];
-};
+}
 
 function scheduleUpdate() {
   setTimeout(() => {
@@ -38,4 +39,4 @@ function scheduleUpdate() {
       updateComponent(component);
     }
   }, 0);
-};
+}

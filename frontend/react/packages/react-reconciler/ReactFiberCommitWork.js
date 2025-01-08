@@ -1,8 +1,8 @@
-import { Deletion, Placement, Update } from "./ReactFiberFlag.js";
+import { Deletion, Placement, Update } from './ReactFiberFlag.js';
 
 function commitRoot(root) {
   const finishedWork = root.finishedWork;
-  
+
   // 완료된 작업이 없으면 종료
   if (finishedWork === null) {
     return null;
@@ -81,10 +81,10 @@ function commitWork(finishedWork) {
 
 function commitDeletion(root, finishedWork) {
   commitNestedUnmounts(root, finishedWork);
-  
+
   const parentFiber = getHostParentFiber(finishedWork);
   const parentNode = parentFiber.stateNode;
-  
+
   if (finishedWork.stateNode !== null) {
     parentNode.removeChild(finishedWork.stateNode);
   }
@@ -115,7 +115,7 @@ function commitBeforeMutationEffectOnFiber(finishedWork) {
       const prevProps = current.memoizedProps;
       const prevState = current.memoizedState;
       const instance = finishedWork.stateNode;
-      
+
       // getSnapshotBeforeUpdate가 있는 경우에만 호출
       if (instance.getSnapshotBeforeUpdate) {
         const snapshot = instance.getSnapshotBeforeUpdate(prevProps, prevState);
@@ -144,7 +144,7 @@ function commitLayoutEffectOnFiber(root, finishedWork) {
         const prevProps = current.memoizedProps;
         const prevState = current.memoizedState;
         const snapshot = instance.__reactInternalSnapshotBeforeUpdate;
-        
+
         instance.componentDidUpdate(prevProps, prevState, snapshot);
         // 스냅샷 정리
         instance.__reactInternalSnapshotBeforeUpdate = null;
@@ -157,7 +157,7 @@ function commitLayoutEffectOnFiber(root, finishedWork) {
     if (updateQueue !== null) {
       const effects = updateQueue.effects;
       if (effects !== null) {
-        effects.forEach(effect => {
+        effects.forEach((effect) => {
           if (effect.destroy !== undefined) {
             effect.destroy();
           }
@@ -172,30 +172,28 @@ function commitLayoutEffectOnFiber(root, finishedWork) {
 
 function commitNestedUnmounts(root, finishedWork) {
   let node = finishedWork;
-  
+
   while (true) {
     commitUnmount(root, node);
-    
+
     if (node.child !== null) {
       node = node.child;
       continue;
     }
-    
+
     if (node === finishedWork) {
       return;
     }
-    
+
     while (node.sibling === null) {
       if (node.return === null || node.return === finishedWork) {
         return;
       }
       node = node.return;
     }
-    
+
     node = node.sibling;
   }
 }
 
-export {
-  commitRoot
-}
+export { commitRoot };

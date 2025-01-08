@@ -7,7 +7,7 @@ function initializeUpdateQueue(fiber) {
       pending: null,
       interleaved: null,
     },
-    effects: null
+    effects: null,
   };
 }
 
@@ -28,7 +28,4 @@ function enqueueUpdate(fiber, update) {
   sharedQueue.pending = update;
 }
 
-export {
-  initializeUpdateQueue,
-  enqueueUpdate
-}
+export { initializeUpdateQueue, enqueueUpdate };
