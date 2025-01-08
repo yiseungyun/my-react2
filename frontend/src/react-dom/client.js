@@ -8,13 +8,7 @@ function createRoot(container) {
     containerInfo: container,   
     current: null,                
     finishedWork: null,         
-    pendingChildren: null,    
-    
-    // 기본적인 상태 관리를 위한 속성
-    pendingLanes: NoLanes,         
-    finishedLanes: NoLanes,  
-    callbackNode: null,           
-    callbackPriority: NoLane,   
+    pendingChildren: null
 	}
 	
 	const rootFiber = createHostRootFiber();
