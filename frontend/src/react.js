@@ -1,6 +1,4 @@
 import { useState } from "./hooks/useState.js";
-import { createElement } from "./render/createElement.js";
-import { render } from "./render/render.js";
 
 export const variable = {
   _rootComponent: null,
@@ -11,7 +9,5 @@ export const variable = {
 }
 
 export {
-  useState,
-  createElement,
-  render
+  useState
 };
