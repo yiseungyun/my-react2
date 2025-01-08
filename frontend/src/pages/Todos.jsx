@@ -1,6 +1,6 @@
 //import { useState } from "../react.js";
 
-const Todos = () => {
+export default function Todos() {
   //const [todos, setTodos] = useState('투두!');
   return (
     <div>
@@ -12,5 +12,3 @@ const Todos = () => {
     </div>
   );
 };
-
-export default Todos;

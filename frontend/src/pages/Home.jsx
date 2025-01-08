@@ -1,7 +1,7 @@
 //import { useState } from "../react.js";
 import Todos from "./Todos.jsx";
 
-const Home = () => {
+export default function Home() {
   //const [count, setCount] = useState(0);
   //const [count2, setCount2] = useState(0);
 
@@ -25,5 +25,3 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;
