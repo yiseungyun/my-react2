@@ -1,4 +1,4 @@
-import { useState } from './hooks/useState.js';
+import { useState } from './useState';
 
 export const variable = {
   _rootComponent: null,

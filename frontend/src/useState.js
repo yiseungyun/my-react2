@@ -1,4 +1,6 @@
-import { variable } from '../react.js';
+// TODO: 삭제 예정
+
+import { variable } from './react.js';
 
 let states = [];
 let updateQueue = [];
