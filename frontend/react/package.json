@@ -1,0 +1,13 @@
+{
+  "name": "react",
+  "version": "1.0.0",
+  "description": "",
+  "exports": {
+    "./jsx-runtime": "./src/package/jsx-runtime.js",
+    "./react-dom": "./src/package/react-dom/client.js"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

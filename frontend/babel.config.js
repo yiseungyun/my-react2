@@ -1,18 +1,8 @@
 export default {
   presets: [
-    [
-      '@babel/preset-env',
-      {
-        modules: false,
-      },
-    ]
-  ],
-  plugins: [
-    [
-      '@babel/plugin-transform-react-jsx',
-      {
-        pragma: 'createElement',
-      },
-    ],
-  ],
+    ['@babel/preset-react', {
+      runtime: 'automatic', 
+      importSource: './dist/react/package' 
+    }]
+  ]
 };
