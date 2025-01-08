@@ -40,6 +40,8 @@ function createFiberFromElement(element) {
 	const { type, key, props } = element;
 	let tag;
 
+	if (!type) return null; 
+
   if (typeof type === 'function') {
     tag = type.prototype?.isReactComponent 
       ? ClassComponent
@@ -50,12 +52,14 @@ function createFiberFromElement(element) {
     tag = HostText;
   }
 
+	if (tag === undefined) return null;
+
 	if (!props) {
 		return createFiber(tag, {}, key);
 	}
 
 	const normalizedKey = key === null ? null : String(key);
-	const children = props.children || [];
+	const children = props?.children || [];
 
   const fiber = createFiber(tag, {
 		...props,
