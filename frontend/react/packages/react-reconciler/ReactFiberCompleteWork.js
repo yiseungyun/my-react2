@@ -1,7 +1,7 @@
 import { ClassComponent, FunctionComponent, HostComponent, HostRoot, HostText } from "./ReactWorkTag.js";
 
 function completeWork(current, workInProgress) {
-	switch (workInProgress.tag) {
+  switch (workInProgress.tag) {
 		case HostRoot: { // 리액트 트리 최상위 노드
 			const rootContainerInstance = workInProgress.stateNode.containerInfo;
 			appendAllChildren(rootContainerInstance, workInProgress);
@@ -40,7 +40,7 @@ function completeWork(current, workInProgress) {
 		}
 		
 		case HostText: { // 텍스트 노드
-			const newText = workInProgress.pendingProps;
+			const newText = workInProgress.pendingProps.children;
 			
 			if (current === null) { // 최초 마운트
 				const textNode = document.createTextNode(newText);

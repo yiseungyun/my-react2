@@ -16,11 +16,10 @@ function beginWork(current, workInProgress) {
 			return null;
 		}
 	}
-	
+
 	switch (workInProgress.tag) {
 		case HostRoot: {
 			const nextChildren = workInProgress.pendingProps.element;
-			console.log('HostRoot nextChildren:', nextChildren);
 			
 			reconcileChildren(current, workInProgress, nextChildren);
 			return workInProgress.child;
@@ -30,7 +29,6 @@ function beginWork(current, workInProgress) {
 			const Component = workInProgress.type;
 			const props = workInProgress.pendingProps;
 			
-			console.log('Function Component props:', props);
 			// 함수형 컴포넌트 실행해 자식 엘리먼트 얻기
 			const nextChildren = Component(props);
 			
@@ -140,7 +138,7 @@ function reconcileChildren(current, workInProgress, nextChildren) {
   // 나머지 새로운 자식들 처리
   for (; newIdx < nextChildren.length; newIdx++) {
     const newFiber = createFiberFromElement(nextChildren[newIdx]);
-		
+
 		if (newFiber) {
 			newFiber.flags = Placement;
 			newFiber.return = workInProgress;
@@ -151,9 +149,6 @@ function reconcileChildren(current, workInProgress, nextChildren) {
 				previousNewFiber.sibling = newFiber;
 			}
 			previousNewFiber = newFiber;
-	
-			// newFiber 생성 후
-			console.log('Created newFiber:', newFiber);
 		}
   }
 }

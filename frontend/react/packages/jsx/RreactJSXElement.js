@@ -1,12 +1,6 @@
 const REACT_ELEMENT_TYPE = Symbol.for('react.element');
 
-function jsx(type, config, maybeKey) {
-  console.group('JSX Transform');
-  console.log('Type:', type);
-  console.log('Config:', config);
-  console.log('MaybeKey:', maybeKey);
-  console.groupEnd();
-  
+function jsx(type, config, maybeKey) {  
   let key = null;
   let ref = null;
   let props = {};

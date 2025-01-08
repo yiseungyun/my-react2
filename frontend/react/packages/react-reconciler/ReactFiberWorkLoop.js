@@ -7,7 +7,6 @@ let workInProgress = null;
 function scheduleUpdateOnFiber(root) {
   // TODO: 우선순위 계산
   performSyncWorkOnRoot(root);
-  
   // TODO: 비동기 업데이트의 경우 스케줄링 
 }
 
@@ -30,7 +29,6 @@ function renderRootSync(root) {
     workLoopSync(root);
     
     // 완료된 작업 반환
-    console.log("workInProgress", workInProgress);
     return workInProgress;
   } finally {
     // TODO: 이전 우선순위 복원
@@ -93,34 +91,22 @@ function completeUnitOfWork(unitOfWork) {
   let completedWork = unitOfWork;
 
   do {
-    // 현재 Fiber의 alternate 가져오기
     const current = completedWork.alternate || null;
-    // 부모 Fiber를 가져오기
-    const returnFiber = completedWork.return || null;
 
-    if (returnFiber === null && completedWork !== null) {
-      workInProgress = null;
-      return;
-    }
-
-    // 현재 Fiber 노드의 작업을 완료
     completeWork(current, completedWork);
 
-    // 형제가 있다면 그 형제로 이동
     const siblingFiber = completedWork.sibling;
     if (siblingFiber !== null) {
-      // 형제가 있으면 workInProgress를 형제로 설정하고 종료
       workInProgress = siblingFiber;
       return;
     }
 
-    // 형제가 없으면 부모로 올라가기
-    completedWork = returnFiber;
+    completedWork = completedWork.return;
+
     if (completedWork === null) {
       workInProgress = null;
       return;
     }
-    workInProgress = completedWork;
   } while (completedWork !== null);
 }
 

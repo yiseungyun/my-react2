@@ -8,7 +8,7 @@ export default function Todos() {
       <p>{/*todos*/}</p>
       <button onClick={() => {
         //setTodos(todos + '투두!');
-      }}>투두증가</button>
+      }}>{"투두증가"}</button>
     </div>
   );
 };

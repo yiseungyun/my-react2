@@ -6,7 +6,16 @@ function createHostRootFiber() {
 }
 
 function createFiber(tag, pendingProps, key) {
-	const props = pendingProps ?? {};
+	let props = pendingProps ?? {};
+	
+	if (tag === HostText) {
+		const textContent = typeof props === 'object'
+		? (props.children || '')
+		: String(props);
+
+		props = { children: textContent };
+	}
+
   const normalizedKey = key === null ? null : String(key);
 
 	return {
@@ -35,22 +44,26 @@ function createFiber(tag, pendingProps, key) {
 }
 
 function createFiberFromElement(element) {
+	if (typeof element === 'string' || typeof element === 'number') {
+    return createFiber(HostText, { children: String(element) }, null);
+  }
+
 	if (!element) return null;
 
 	const { type, key, props } = element;
 	let tag;
 
-	if (!type) return null; 
+	if (!type) return null;
 
   if (typeof type === 'function') {
     tag = type.prototype?.isReactComponent 
       ? ClassComponent
       : FunctionComponent;
-  } else if (typeof type === 'string') {
-    tag = HostComponent;
   } else if (type === TEXT_ELEMENT) {
-    tag = HostText;
-  }
+		tag = HostText;
+	} else if (typeof type === 'string') {
+    tag = HostComponent;
+  } 
 
 	if (tag === undefined) return null;
 
