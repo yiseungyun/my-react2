@@ -1,5 +1,5 @@
 # my-react2
-> my-react 개선 프로젝트
+> [my-react](https://github.com/yiseungyun/my-react) 개선 프로젝트
 
 ## 프로젝트 목표
 - 리액트 Fiber를 이해하고 적용해서 리액트 내부를 구현해보기
