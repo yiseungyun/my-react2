@@ -101,16 +101,18 @@ function createWorkInProgress(current, pendingProps) {
       ...current,
       alternate: current,
       pendingProps: pendingProps || current.pendingProps,
-      flags: 0,
-      child: null,
-      memoizedProps: null,
-      memoizedState: null,
     };
     current.alternate = workInProgress;
+    workInProgress.alternate = current;
   } else {
     workInProgress.pendingProps = pendingProps || current.pendingProps;
     workInProgress.flags = 0;
-    workInProgress.child = null;
+
+    workInProgress.child = current.child;
+    workInProgress.memoizedState = current.memoizedState;
+    workInProgress.updateQueue = current.updateQueue;
+
+    workInProgress.alternate = current;
     current.alternate = workInProgress;
   }
 
