@@ -92,4 +92,29 @@ function createFiberFromElement(element) {
   return fiber;
 }
 
-export { createHostRootFiber, createFiber, createFiberFromElement };
+function createWorkInProgress(current, pendingProps) {
+  if (!current) return null;
+  let workInProgress = current.alternate;
+
+  if (workInProgress === null) {
+    workInProgress = {
+      ...current,
+      alternate: current,
+      pendingProps: pendingProps || current.pendingProps,
+      flags: 0,
+      child: null,
+      memoizedProps: null,
+      memoizedState: null,
+    };
+    current.alternate = workInProgress;
+  } else {
+    workInProgress.pendingProps = pendingProps || current.pendingProps;
+    workInProgress.flags = 0;
+    workInProgress.child = null;
+    current.alternate = workInProgress;
+  }
+
+  return workInProgress;
+}
+
+export { createHostRootFiber, createFiber, createFiberFromElement, createWorkInProgress };

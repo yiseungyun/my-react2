@@ -1,3 +1,4 @@
+import { createWorkInProgress } from './ReactFiber.js';
 import { beginWork } from './ReactFiberBeginWork.js';
 import { commitRoot } from './ReactFiberCommitWork.js';
 import { completeWork } from './ReactFiberCompleteWork.js';
@@ -33,31 +34,6 @@ function renderRootSync(root) {
   } finally {
     // TODO: 이전 우선순위 복원
   }
-}
-
-function createWorkInProgress(current, pendingProps) {
-  if (!current) return null;
-  let workInProgress = current.alternate;
-
-  if (workInProgress === null) {
-    workInProgress = {
-      ...current,
-      alternate: current,
-      pendingProps: pendingProps || current.pendingProps,
-      flags: 0,
-      child: null,
-      memoizedProps: null,
-      memoizedState: null,
-    };
-    current.alternate = workInProgress;
-  } else {
-    workInProgress.pendingProps = pendingProps || current.pendingProps;
-    workInProgress.flags = 0;
-    workInProgress.child = null;
-    current.alternate = workInProgress;
-  }
-
-  return workInProgress;
 }
 
 function workLoopSync() {
